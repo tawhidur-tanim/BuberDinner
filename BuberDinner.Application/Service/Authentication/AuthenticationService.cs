@@ -16,9 +16,9 @@ public class AuthenticationService : IAuthenticationService
 
     public AuthenticationResult Register(string firstName, string lastName, string email, string password)
     {
-
-
         // create jwt 
+
+
 
         Guid userId = Guid.NewGuid();
         string token = _jwtTokenGenerator.GenerateJWTToken(userId, firstName, lastName);
@@ -28,6 +28,7 @@ public class AuthenticationService : IAuthenticationService
 
     public AuthenticationResult Login(string email, string password)
     {
+
         return new AuthenticationResult(Guid.NewGuid(), "FirstName", "LastName", email, "token");
     }
 
