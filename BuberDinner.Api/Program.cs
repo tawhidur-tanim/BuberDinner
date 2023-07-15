@@ -12,7 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
     .AddInfrastructure(builder.Configuration);
 
     builder.Services.AddSingleton<ProblemDetailsFactory, BuberDinnerProblemDetailsFactory>();
-    builder.Services.AddControllers(options => options.Filters.Add<ExceptionHandlingFilter>());
+    // builder.Services.AddControllers(options => options.Filters.Add<ExceptionHandlingFilter>());
+    builder.Services.AddControllers();
 }
 
 var app = builder.Build();
