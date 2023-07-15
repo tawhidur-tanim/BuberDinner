@@ -2,6 +2,8 @@ using BuberDinner.Application.Common.Errors;
 using BuberDinner.Application.Common.Interfaces;
 using BuberDinner.Application.Common.Persistence;
 using BuberDinner.Domain.Entities;
+using BuberDinner.Domain.Errors;
+using ErrorOr;
 
 namespace BuberDinner.Application.Service.Authentication;
 
@@ -19,14 +21,14 @@ public class AuthenticationService : IAuthenticationService
     }
 
 
-    public AuthenticationResult Register(string firstName, string lastName, string email, string password)
+    public ErrorOr<AuthenticationResult> Register(string firstName, string lastName, string email, string password)
     {
 
         // 1. Check if user exist
         User? user = _userRepository.GetUserByEmail(email);
         if (user is not null)
         {
-            throw new DuplicateEmailException();
+            return Errors.User.DuplicateEmailError;
         }
 
         // 2. create a new user and save it to the db
@@ -52,13 +54,13 @@ public class AuthenticationService : IAuthenticationService
         , newUser.LastName, newUser.Email, token);
     }
 
-    public AuthenticationResult Login(string email, string password)
+    public ErrorOr<AuthenticationResult> Login(string email, string password)
     {
 
         // 1. Check if user exists
         if (_userRepository.GetUserByEmail(email) is not User user)
         {
-            throw new Exception("User or password does not match");
+            return Errors.Authentication.InvalidCredentials;
         }
 
         // 2. Match password
@@ -66,7 +68,7 @@ public class AuthenticationService : IAuthenticationService
 
         if (user.Password != password)
         {
-            throw new Exception("User or password does not match");
+             return Errors.Authentication.InvalidCredentials;
         }
 
         // 3. Generate and return new token
