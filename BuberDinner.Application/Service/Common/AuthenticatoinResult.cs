@@ -1,4 +1,4 @@
-namespace BuberDinner.Application.Service.Authentication;
+namespace BuberDinner.Application.Service.Common;
 
 
 public record AuthenticationResult(
