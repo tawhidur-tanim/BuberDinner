@@ -1,31 +1,33 @@
-using BuberDinner.Application.Common.Errors;
+
+using BuberDinner.Application.Authentication.Common;
 using BuberDinner.Application.Common.Interfaces;
 using BuberDinner.Application.Common.Persistence;
-using BuberDinner.Application.Service.Common;
 using BuberDinner.Domain.Entities;
 using BuberDinner.Domain.Errors;
 using ErrorOr;
+using MediatR;
 
-namespace BuberDinner.Application.Service.Authentication.Queries;
+namespace BuberDinner.Application.Authentication.Queries.Login;
 
-
-public class AuthenticationQueryService : IAuthenticationQueryService
+public class LoginQuerydHandler : IRequestHandler<LoginQuery, ErrorOr<AuthenticationResult>>
 {
 
     private readonly IJWTTokenGenerator _jwtTokenGenerator;
     private readonly IUserRepository _userRepository;
 
-    public AuthenticationQueryService(IJWTTokenGenerator jWTTokenGenerator, IUserRepository userRepository)
+    public LoginQuerydHandler(
+        IJWTTokenGenerator jWTTokenGenerator,
+        IUserRepository userRepository)
     {
         _jwtTokenGenerator = jWTTokenGenerator;
         _userRepository = userRepository;
     }
 
-    public ErrorOr<AuthenticationResult> Login(string email, string password)
+    public async Task<ErrorOr<AuthenticationResult>> Handle(LoginQuery request, CancellationToken cancellationToken)
     {
-
+        await Task.CompletedTask;
         // 1. Check if user exists
-        if (_userRepository.GetUserByEmail(email) is not User user)
+        if (_userRepository.GetUserByEmail(request.Email) is not User user)
         {
             return Errors.Authentication.InvalidCredentials;
         }
@@ -33,7 +35,7 @@ public class AuthenticationQueryService : IAuthenticationQueryService
         // 2. Match password
 
 
-        if (user.Password != password)
+        if (user.Password != request.Password)
         {
             return Errors.Authentication.InvalidCredentials;
         }
@@ -44,8 +46,6 @@ public class AuthenticationQueryService : IAuthenticationQueryService
              , user.LastName);
 
 
-        return new AuthenticationResult(user.Id, user.FirstName, user.LastName, user.Email, token);
+        return new AuthenticationResult(user, token);
     }
-
-
 }

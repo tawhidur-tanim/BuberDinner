@@ -1,32 +1,34 @@
-using BuberDinner.Application.Common.Errors;
+
+using BuberDinner.Application.Authentication.Common;
 using BuberDinner.Application.Common.Interfaces;
 using BuberDinner.Application.Common.Persistence;
-using BuberDinner.Application.Service.Common;
 using BuberDinner.Domain.Entities;
 using BuberDinner.Domain.Errors;
 using ErrorOr;
+using MediatR;
 
-namespace BuberDinner.Application.Service.Authentication.Commands;
+namespace BuberDinner.Application.Authentication.Commands.Register;
 
-
-public class AuthenticationCommandService : IAuthenticationCommandService
+public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<AuthenticationResult>>
 {
 
     private readonly IJWTTokenGenerator _jwtTokenGenerator;
     private readonly IUserRepository _userRepository;
 
-    public AuthenticationCommandService(IJWTTokenGenerator jWTTokenGenerator, IUserRepository userRepository)
+    public RegisterCommandHandler(
+        IJWTTokenGenerator jWTTokenGenerator,
+        IUserRepository userRepository)
     {
         _jwtTokenGenerator = jWTTokenGenerator;
         _userRepository = userRepository;
     }
 
-
-    public ErrorOr<AuthenticationResult> Register(string firstName, string lastName, string email, string password)
+    public async Task<ErrorOr<AuthenticationResult>> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
 
-        // 1. Check if user exist
-        User? user = _userRepository.GetUserByEmail(email);
+        await Task.CompletedTask;
+        
+        User? user = _userRepository.GetUserByEmail(request.Email);
         if (user is not null)
         {
             return Errors.User.DuplicateEmailError;
@@ -36,10 +38,10 @@ public class AuthenticationCommandService : IAuthenticationCommandService
 
         User newUser = new User
         {
-            FirstName = firstName,
-            LastName = lastName,
-            Email = email,
-            Password = password
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            Email = request.Email,
+            Password = request.Password
         };
 
         _userRepository.Add(newUser);
@@ -50,10 +52,6 @@ public class AuthenticationCommandService : IAuthenticationCommandService
         , newUser.FirstName
         , newUser.LastName);
 
-        return new AuthenticationResult(newUser.Id
-        , newUser.FirstName
-        , newUser.LastName, newUser.Email, token);
+        return new AuthenticationResult(newUser, token);
     }
-
-
 }
