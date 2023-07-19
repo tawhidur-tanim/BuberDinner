@@ -23,7 +23,9 @@ public class JwtTokenGenerator : IJWTTokenGenerator
     public string GenerateJWTToken(Guid userId, string firstName, string lastName)
     {
 
-        var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super-secret-key-123456-long-key-many-more")), SecurityAlgorithms.HmacSha256);
+        var signingCredentials = new SigningCredentials(
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Secret)),
+            SecurityAlgorithms.HmacSha256);
 
         var claims = new[]{
 
@@ -35,6 +37,7 @@ public class JwtTokenGenerator : IJWTTokenGenerator
 
         var securityToken = new JwtSecurityToken(
             issuer: _settings.Issuer,
+            audience: _settings.Issuer,
             expires: _dateTimeprovider.UtcNow.AddMinutes(_settings.ExpirationInMinutes),
             claims: claims,
             signingCredentials: signingCredentials
