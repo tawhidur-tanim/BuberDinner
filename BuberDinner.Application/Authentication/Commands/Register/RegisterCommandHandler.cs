@@ -2,8 +2,8 @@
 using BuberDinner.Application.Authentication.Common;
 using BuberDinner.Application.Common.Interfaces;
 using BuberDinner.Application.Common.Persistence;
-using BuberDinner.Domain.Entities;
-using BuberDinner.Domain.Errors;
+using BuberDinner.Domain.Common.Entities;
+
 using ErrorOr;
 using MediatR;
 
@@ -27,11 +27,11 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<A
     {
 
         await Task.CompletedTask;
-        
+
         User? user = _userRepository.GetUserByEmail(request.Email);
         if (user is not null)
         {
-            return Errors.User.DuplicateEmailError;
+            return Domain.Common.Errors.Errors.User.DuplicateEmailError;
         }
 
         // 2. create a new user and save it to the db
