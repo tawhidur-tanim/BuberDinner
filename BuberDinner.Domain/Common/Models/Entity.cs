@@ -4,9 +4,7 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>
     where TId : notnull
 {
 
-
     public TId Id { get; protected set; }
-
 
     protected Entity(TId id)
     {
@@ -40,5 +38,9 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>
 
 
 
+#pragma warning disable CS8618
 
+    protected Entity() { }
+
+#pragma warning restore CS8618
 }
