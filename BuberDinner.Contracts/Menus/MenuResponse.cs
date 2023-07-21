@@ -4,13 +4,14 @@ public record MenuResponse(
     string Id,
     string Name,
     string Description,
-    float? AverageRating,
+     float? AverageRating,
     List<MenuSectionResponse> Sections,
     string HostId,
     List<string> DinnerIds,
     List<string> MenuReviewIds,
     DateTime CreatedDateTime,
-    DateTime UpdatedDateTime);
+    DateTime UpdatedDateTime
+    );
 
 public record MenuSectionResponse(
     string Id,
