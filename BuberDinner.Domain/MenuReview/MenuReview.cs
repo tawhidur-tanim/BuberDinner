@@ -10,7 +10,7 @@ namespace BuberDinner.Domain.MenuReview;
 
 public sealed class MenuReview : AggregateRoot<MenuReviewId, Guid>
 {
-    public Rating Rating { get; }
+    public Rating Rating { get; } = null!;
     public string Comment { get; }
     public HostId HostId { get; }
     public MenuId MenuId { get; }

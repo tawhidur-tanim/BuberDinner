@@ -8,7 +8,7 @@ namespace BuberDinner.Domain.Bills;
 
 public sealed class Bill : AggregateRoot<BillId, Guid>
 {
-    public DinnerId DinnerId { get; }
+    public DinnerId DinnerId { get; } = null!;
     public GuestId GuestId { get; }
     public HostId HostId { get; }
     public Price Price { get; }

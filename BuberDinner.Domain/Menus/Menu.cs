@@ -39,7 +39,7 @@ public sealed class Menu : AggregateRoot<MenuId, Guid>
         HostId = hostId;
         Name = name;
         Description = description;
-        _sections = sections;
+        _sections = sections ?? new();
         AverageRating = averageRating;
     }
 
