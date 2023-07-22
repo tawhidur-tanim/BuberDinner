@@ -6,7 +6,7 @@ using BuberDinner.Domain.Hosts;
 using BuberDinner.Domain.MenuReview;
 using BuberDinner.Domain.Menus;
 using BuberDinner.Domain.Users;
-
+using BuberDinner.Infrastructure.Persistence.Interceptors;
 using Microsoft.EntityFrameworkCore;
 
 namespace BuberDinner.Infrastructure.Persistence;
@@ -14,13 +14,16 @@ namespace BuberDinner.Infrastructure.Persistence;
 public sealed class BuberDinnerDbContext : DbContext
 {
 
+   private readonly PublishDomainEventsInterceptor _publishDomainEventsInterceptor;
+
     public BuberDinnerDbContext(
-        DbContextOptions<BuberDinnerDbContext> options
+        DbContextOptions<BuberDinnerDbContext> options,
+        PublishDomainEventsInterceptor publishDomainEventsInterceptor
     ) : base(options)
     {
-
+        _publishDomainEventsInterceptor = publishDomainEventsInterceptor;
     }
-
+    
     public DbSet<Bill> Bills { get; set; } = null!;
     public DbSet<Dinner> Dinners { get; set; } = null!;
     public DbSet<Guest> Guests { get; set; } = null!;
@@ -37,8 +40,11 @@ public sealed class BuberDinnerDbContext : DbContext
         base.OnModelCreating(modelBuilder);
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+  protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        optionsBuilder
+            .AddInterceptors(_publishDomainEventsInterceptor);
+
         base.OnConfiguring(optionsBuilder);
     }
 }
